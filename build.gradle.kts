@@ -126,6 +126,8 @@ dependencies {
     detektPlugins(libs.ortDetektRules)
 
     implementation(libs.log4jApiKotlin)
+    implementation(libs.ortCommonUtils)
+    implementation(libs.ortSpdxPackageManager)
 
     "analyzerCliClasspath"(libs.ortAnalyzerCommand)
     "analyzerCliClasspath"(libs.ortCli)

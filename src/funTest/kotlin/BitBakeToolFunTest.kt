@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 The ORT Project Authors (see <https://github.com/oss-review-toolkit/ort/blob/main/NOTICE>)
+ * Copyright (C) 2023 Double Open Oy (see <https://www.doubleopen.org/>)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +18,23 @@
  * License-Filename: LICENSE
  */
 
-package org.ossreviewtoolkit.plugins.packagemanagers.mypackagemanager
+package org.ossreviewtoolkit.plugins.packagemanagers.bitbake
 
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.collections.beEmpty
-import io.kotest.matchers.should
-
-import java.io.File
+import io.kotest.engine.spec.tempdir
+import io.kotest.matchers.string.shouldMatch
 
 import org.ossreviewtoolkit.analyzer.managers.create
-import org.ossreviewtoolkit.analyzer.managers.resolveSingleProject
 
-class MyPackageManagerFunTest : WordSpec({
-    "Resolving project dependencies" should {
-        "return an empty list of issues" {
-            val definitionFile = File("path/to/file").absoluteFile
+class BitBakeToolFunTest : WordSpec({
+    "BitBake" should {
+        "get the version correctly" {
+            val bitBake = create("BitBake") as BitBake
 
-            val result = create("MyPackageManager").resolveSingleProject(definitionFile)
+            val bitBakeProcess = bitBake.runBitBake(tempdir(), "--version")
+            val version = bitBakeProcess.stdout.lineSequence().first().substringAfterLast(' ')
 
-            result.issues should beEmpty()
+            version shouldMatch "\\d+\\.\\d+\\.\\d+"
         }
     }
 })

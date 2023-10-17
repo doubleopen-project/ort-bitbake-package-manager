@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 The ORT Project Authors (see <https://github.com/oss-review-toolkit/ort/blob/main/NOTICE>)
+ * Copyright (C) 2023 Double Open Oy (see <https://www.doubleopen.org/>)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,4 +18,4 @@
  * License-Filename: LICENSE
  */
 
-rootProject.name = "MyPackageManager"
+rootProject.name = "bitbake-package-manager"
