@@ -133,6 +133,7 @@ dependencies {
     "analyzerCliClasspath"(libs.ortCli)
 
     "funTestImplementation"(libs.ortTestUtils)
+    "funTestImplementation"(libs.ortVcsGit)
     "funTestImplementation"(variantOf(libs.ortAnalyzer) { classifier("test-fixtures") })
 }
 
