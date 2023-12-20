@@ -81,6 +81,8 @@ class BitBake(
         val sanityConfCreated = sanityConfFile.createNewFile()
         if (sanityConfCreated) logger.info { "Created '$sanityConfFile' as it did not exist." }
 
+        configureGitSafeDirectory()
+
         val deployDirs = mutableSetOf<File>()
 
         definitionFiles.forEach { definitionFile ->
@@ -126,6 +128,11 @@ class BitBake(
 
     internal fun runBitBake(workingDir: File, vararg args: String): ProcessCapture =
         ProcessCapture(scriptFile.absolutePath, workingDir.absolutePath, *args, workingDir = workingDir)
+            .requireSuccess()
+
+    private fun configureGitSafeDirectory(): ProcessCapture =
+        // Note that the '*' is not a glob-pattern here, but a special value to opt-out of the security check.
+        ProcessCapture("git", "config", "--system", "--add", "safe.directory", "*")
             .requireSuccess()
 
     private fun extractResourceToTempFile(resourceName: String): File {
