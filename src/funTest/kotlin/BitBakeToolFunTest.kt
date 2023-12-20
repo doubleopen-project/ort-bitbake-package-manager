@@ -82,5 +82,22 @@ class BitBakeToolFunTest : WordSpec({
                 }
             }
         }
+
+        "create a SPDX files for the 'xmlto' package" {
+            val recipeFileName = "xmlto_0.0.28.bb"
+            val result = Analyzer(AnalyzerConfiguration()).run {
+                val fileInfo = findManagedFiles(projectDir)
+                val singleFileInfo = fileInfo.copy(
+                    managedFiles = fileInfo.managedFiles.map { (packageManager, definitionsFiles) ->
+                        packageManager to definitionsFiles.filter { it.name == recipeFileName }
+                    }.toMap()
+                )
+                analyze(singleFileInfo)
+            }
+
+            result.analyzer?.result shouldNotBeNull {
+                projects shouldHaveSize 89
+            }
+        }
     }
 })
