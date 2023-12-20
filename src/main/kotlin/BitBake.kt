@@ -35,6 +35,7 @@ import org.ossreviewtoolkit.model.config.RepositoryConfiguration
 import org.ossreviewtoolkit.plugins.packagemanagers.spdx.SpdxDocumentFile
 import org.ossreviewtoolkit.utils.common.ProcessCapture
 import org.ossreviewtoolkit.utils.common.getCommonParentFile
+import org.ossreviewtoolkit.utils.common.safeMkdirs
 import org.ossreviewtoolkit.utils.common.withoutPrefix
 
 /**
@@ -71,6 +72,15 @@ class BitBake(
             "No '$INIT_SCRIPT_NAME' script file found for directory '$commonDefinitionDir'."
         }
 
+        logger.info { "Determined the working directory to be '$workingDir'." }
+
+        // Create an empty 'sanity.conf' which allows BitBake to run as root which is required in some Docker scenarios.
+        val sanityConfFile = workingDir.resolve("conf/sanity.conf").also {
+            it.parentFile.safeMkdirs()
+        }
+        val sanityConfCreated = sanityConfFile.createNewFile()
+        if (sanityConfCreated) logger.info { "Created '$sanityConfFile' as it did not exist." }
+
         val deployDirs = mutableSetOf<File>()
 
         definitionFiles.forEach { definitionFile ->
@@ -89,6 +99,10 @@ class BitBake(
 
         if (!scriptFile.delete()) logger.warn { "Unable to delete the temporary '$scriptFile' file." }
         if (!spdxConfFile.delete()) logger.warn { "Unable to delete the temporary '$spdxConfFile' file." }
+
+        if (sanityConfCreated && !sanityConfFile.delete()) {
+            logger.warn { "Unable to delete the temporary '$sanityConfFile' file." }
+        }
 
         val commonDeployDir = deployDirs.singleOrNull() ?: getCommonParentFile(deployDirs)
         val spdxFiles = commonDeployDir.findSpdxFiles()
