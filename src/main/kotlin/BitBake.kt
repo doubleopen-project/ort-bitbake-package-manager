@@ -61,7 +61,7 @@ class BitBake(
     }
 
     private val scriptFile by lazy { extractResourceToTempFile(BITBAKE_SCRIPT_NAME).apply { setExecutable(true) } }
-    private val confFile by lazy { extractResourceToTempFile(SPDX_CONF_NAME) }
+    private val spdxConfFile by lazy { extractResourceToTempFile(SPDX_CONF_NAME) }
 
     private val spdxManager by lazy { SpdxDocumentFile(name, analysisRoot, analyzerConfig, repoConfig) }
 
@@ -87,8 +87,8 @@ class BitBake(
             }
         }
 
-        if (!scriptFile.delete()) logger.warn { "Unable to delete temporary script file '$scriptFile'." }
-        if (!confFile.delete()) logger.warn { "Unable to delete temporary conf file '$confFile'." }
+        if (!scriptFile.delete()) logger.warn { "Unable to delete the temporary '$scriptFile' file." }
+        if (!spdxConfFile.delete()) logger.warn { "Unable to delete the temporary '$spdxConfFile' file." }
 
         val commonDeployDir = deployDirs.singleOrNull() ?: getCommonParentFile(deployDirs)
         val spdxFiles = commonDeployDir.findSpdxFiles()
@@ -106,7 +106,7 @@ class BitBake(
     }
 
     private fun createSpdx(workingDir: File, target: String) =
-        runBitBake(workingDir, "-r", confFile.absolutePath, "-c", "create_spdx", target)
+        runBitBake(workingDir, "-r", spdxConfFile.absolutePath, "-c", "create_spdx", target)
 
     private fun File.findSpdxFiles() = resolve("spdx").walk().filter { it.isFile && it.name.endsWith(".spdx.json") }
 
